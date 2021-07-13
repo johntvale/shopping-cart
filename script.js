@@ -28,28 +28,56 @@ function createProductItemElement({ id: sku, title: name, thumbnail: image }) {
 //   return item.querySelector('span.item__sku').innerText;
 // }
 
-// function cartItemClickListener(event) {
-//   // coloque seu código aqui
-// }
+function cartItemClickListener(event) {
+  console.log(event);
+  // coloque seu código aqui
+}
 
-// function createCartItemElement({ sku, name, salePrice }) {
-//   const li = document.createElement('li');
-//   li.className = 'cart__item';
-//   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
-//   li.addEventListener('click', cartItemClickListener);
-//   return li;
-// }
+function createCartItemElement({ id: sku, title: name, price: salePrice }) {
+  const li = document.createElement('li');
+  li.className = 'cart__item';
+  li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
+  li.addEventListener('click', cartItemClickListener);
+  return li;
+}
 
-async function fetchProductsList() {
-  const resultsJson = await fetch('https://api.mercadolibre.com/sites/MLB/search?q=computador')
-    .then((response) => response.json())
-    .then((objJson) => objJson.results);
+async function fetchProductsInfo(ItemID) { // Requisito 2
+  const productInfo = await fetch(`https://api.mercadolibre.com/items/${ItemID}`);
+  const responseJson = await productInfo.json();
+  const productByID = await responseJson;
 
-  resultsJson.forEach((element) => {
+  const cartList = document.querySelector('.cart__items');
+  cartList.appendChild(createCartItemElement(productByID));
+  // return productInfo;
+  // minha função faz duas coisas: busca um objeto e adiciona o item ao carrinho.
+  // separar função fetch
+}
+
+function recSku(event) {
+  const actualItem = event.path[1];
+  const foundSku = actualItem.querySelector('.item__sku').innerText;
+  fetchProductsInfo(foundSku);
+}
+
+function addButtonEvent() { // Requisito 2
+  const newButton = document.querySelectorAll('button.item__add');
+  newButton.forEach((eachButton) => {
+    eachButton.addEventListener('click', recSku);
+  });
+}
+
+async function fetchProductsList() { // Requisito 1
+  const resultsJson = await fetch('https://api.mercadolibre.com/sites/MLB/search?q=computador');
+    const responseJson = await resultsJson.json();
+    const productList = await responseJson.results;
+
+    productList.forEach((element) => {
     const elementActual = createProductItemElement(element);
     const sectionItems = document.querySelector('.items');
     sectionItems.appendChild(elementActual);
   });
+
+  addButtonEvent();
 }
 
 window.onload = () => {
