@@ -67,9 +67,15 @@ function addButtonEvent() { // Requisito 2
 }
 
 async function fetchProductsList() { // Requisito 1
+  const b = document.querySelector('body');
+  b.appendChild(createCustomElement('p', 'loading', 'loading...'));
+  // console.log(b);
+  // createCustomElement('p', 'loading', 'loading...');
   const resultsJson = await fetch('https://api.mercadolibre.com/sites/MLB/search?q=computador');
     const responseJson = await resultsJson.json();
     const productList = await responseJson.results;
+  const p = document.querySelector('p.loading');
+  p.remove();
 
     productList.forEach((element) => {
     const elementActual = createProductItemElement(element);
