@@ -86,6 +86,20 @@ async function fetchProductsList() { // Requisito 1
   addButtonEvent();
 }
 
+function clickToEmptyCart() {
+  const lis = document.querySelectorAll('li.cart__item');
+  const lenghtOfLis = lis.length - 1;
+  for (let index = lenghtOfLis; index >= 0; index -= 1) {
+    lis[index].remove();
+  }
+}
+
+function setButtonEmptyCart() {
+  const btn = document.querySelector('button.empty-cart');
+  btn.addEventListener('click', clickToEmptyCart);
+}
+
 window.onload = () => {
   fetchProductsList();
+  setButtonEmptyCart();
 };
